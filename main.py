@@ -24,7 +24,7 @@ API_KEY = os.getenv(
 app = FastAPI(
     title="Uber Eats Mock API",
     description="Mock REST API for Uber Eats Data Engineering Project",
-    version="2.0"
+    version="2.1"
 )
 
 
@@ -84,11 +84,30 @@ def load_json_file(file_name):
 # TIMESTAMP HELPERS
 # =========================================================
 
-def parse_timestamp(value: str):
+def parse_timestamp(value):
+    """
+    Convert an ISO-8601 timestamp into a timezone-aware UTC datetime.
+
+    This handles both:
+    - timezone-aware values such as 2026-09-01T12:20:00Z
+    - timezone-naive values such as 2026-09-01T12:20:00
+
+    Naive timestamps are treated as UTC so that API incremental
+    filtering does not fail when comparing them with ADF timestamps.
+    """
     try:
-        return datetime.fromisoformat(
-            value.replace("Z", "+00:00")
+        if not value:
+            return None
+
+        parsed = datetime.fromisoformat(
+            str(value).replace("Z", "+00:00")
         )
+
+        if parsed.tzinfo is None:
+            parsed = parsed.replace(tzinfo=timezone.utc)
+
+        return parsed.astimezone(timezone.utc)
+
     except (ValueError, TypeError):
         return None
 
@@ -227,7 +246,7 @@ def home():
 
     return {
         "message": "Uber Eats Mock API is running",
-        "version": "2.0",
+        "version": "2.1",
         "endpoints": [
             "/payments",
             "/deliveries",
