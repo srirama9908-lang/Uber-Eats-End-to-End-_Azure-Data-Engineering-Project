@@ -278,38 +278,11 @@
 				}
 			},
 			{
-				"name": "Job_Silver",
-				"type": "DatabricksJob",
-				"dependsOn": [
-					{
-						"activity": "ForEach item",
-						"dependencyConditions": [
-							"Succeeded"
-						]
-					}
-				],
-				"policy": {
-					"timeout": "0.12:00:00",
-					"retry": 0,
-					"retryIntervalInSeconds": 30,
-					"secureOutput": false,
-					"secureInput": false
-				},
-				"userProperties": [],
-				"typeProperties": {
-					"jobId": "121055824417886"
-				},
-				"linkedServiceName": {
-					"referenceName": "LS_db_silver",
-					"type": "LinkedServiceReference"
-				}
-			},
-			{
-				"name": "Web1",
+				"name": "notifications",
 				"type": "WebActivity",
 				"dependsOn": [
 					{
-						"activity": "Job_Silver",
+						"activity": "ForEach item",
 						"dependencyConditions": [
 							"Succeeded"
 						]
