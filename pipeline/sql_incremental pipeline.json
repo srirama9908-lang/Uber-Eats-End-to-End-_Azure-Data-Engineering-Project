@@ -63,7 +63,7 @@
 								"source": {
 									"type": "AzureSqlSource",
 									"sqlReaderQuery": {
-										"value": "@concat(\n    'SELECT COUNT(*) AS row_count FROM dbo.',\n    item().table_name,\n    ' WHERE ',\n    item().watermark_column,\n    ' > ''',\n    item().last_watermark_value,\n    ''''\n    )",
+										"value": "@concat(\n    'SELECT * FROM dbo.',\n    item().table_name\n)",
 										"type": "Expression"
 									},
 									"queryTimeout": "02:00:00",
