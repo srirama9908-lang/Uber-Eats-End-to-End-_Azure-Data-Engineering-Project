@@ -79,6 +79,26 @@
 			"dependsOn": []
 		},
 		{
+			"name": "[concat(parameters('factoryName'), '/LS_db_silver')]",
+			"type": "Microsoft.DataFactory/factories/linkedServices",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"annotations": [],
+				"type": "AzureDatabricks",
+				"typeProperties": {
+					"domain": "https://adb-7405609939036313.13.azuredatabricks.net",
+					"authentication": "MSI",
+					"workspaceResourceId": "/subscriptions/3c895dcc-8ce9-4539-89c2-029fbf7ff343/resourceGroups/rg_ubereats/providers/Microsoft.Databricks/workspaces/ubereats-databricks",
+					"newClusterNodeType": "Standard_DS3_v2",
+					"newClusterNumOfWorker": "1",
+					"newClusterVersion": "12.2.x-scala2.12",
+					"clusterOption": "Fixed",
+					"newClusterInitScripts": []
+				}
+			},
+			"dependsOn": []
+		},
+		{
 			"name": "[concat(parameters('factoryName'), '/ls_sql_control')]",
 			"type": "Microsoft.DataFactory/factories/linkedServices",
 			"apiVersion": "2018-06-01",
@@ -562,8 +582,6 @@
 											{
 												"name": "adls data migration_copy1",
 												"type": "Copy",
-												"state": "Inactive",
-												"onInactiveMarkAs": "Succeeded",
 												"dependsOn": [],
 												"policy": {
 													"timeout": "0.12:00:00",
@@ -632,11 +650,9 @@
 											{
 												"name": "Get max watermark_copy1",
 												"type": "Lookup",
-												"state": "Inactive",
-												"onInactiveMarkAs": "Succeeded",
 												"dependsOn": [
 													{
-														"activity": "adls data migration_copy1",
+														"activity": "Job_Silver_copy1",
 														"dependencyConditions": [
 															"Succeeded"
 														]
@@ -670,8 +686,6 @@
 											{
 												"name": "update watermark_copy1",
 												"type": "Script",
-												"state": "Inactive",
-												"onInactiveMarkAs": "Succeeded",
 												"dependsOn": [
 													{
 														"activity": "Get max watermark_copy1",
@@ -697,12 +711,45 @@
 														{
 															"type": "Query",
 															"text": {
-																"value": "@concat(\n    'UPDATE dbo.pipeline_control SET last_watermark_value = ''',\n    activity('Get max watermark').output.firstRow.max_watermark,\n    '''WHERE control_id = ',\n    item().control_id\n)\n",
+																"value": "@concat(\n    'UPDATE dbo.pipeline_control SET last_watermark_value = ''',\n    activity('Get max watermark_copy1').output.firstRow.max_watermark,\n    '''WHERE control_id = ',\n    item().control_id\n)\n",
 																"type": "Expression"
 															}
 														}
 													],
 													"scriptBlockExecutionTimeout": "02:00:00"
+												}
+											},
+											{
+												"name": "Job_Silver_copy1",
+												"type": "DatabricksJob",
+												"dependsOn": [
+													{
+														"activity": "adls data migration_copy1",
+														"dependencyConditions": [
+															"Succeeded"
+														]
+													}
+												],
+												"policy": {
+													"timeout": "0.12:00:00",
+													"retry": 0,
+													"retryIntervalInSeconds": 30,
+													"secureOutput": false,
+													"secureInput": false
+												},
+												"userProperties": [],
+												"typeProperties": {
+													"jobId": "121055824417886",
+													"jobParameters": {
+														"table_name": {
+															"value": "@item().table_name",
+															"type": "Expression"
+														}
+													}
+												},
+												"linkedServiceName": {
+													"referenceName": "LS_db_silver",
+													"type": "LinkedServiceReference"
 												}
 											}
 										]
@@ -712,7 +759,7 @@
 						}
 					},
 					{
-						"name": "Web1",
+						"name": "notifications",
 						"type": "WebActivity",
 						"dependsOn": [
 							{
@@ -752,7 +799,8 @@
 				"[concat(variables('factoryId'), '/datasets/ds_sql')]",
 				"[concat(variables('factoryId'), '/datasets/ds_adls')]",
 				"[concat(variables('factoryId'), '/datasets/ds_sql_water')]",
-				"[concat(variables('factoryId'), '/linkedServices/ls_sql_database')]"
+				"[concat(variables('factoryId'), '/linkedServices/ls_sql_database')]",
+				"[concat(variables('factoryId'), '/linkedServices/LS_db_silver')]"
 			]
 		},
 		{
