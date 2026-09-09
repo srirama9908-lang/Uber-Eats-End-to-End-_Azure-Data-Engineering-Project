@@ -124,6 +124,39 @@
 									}
 								}
 							]
+						},
+						{
+							"name": "silver_csv_job_copy1",
+							"type": "DatabricksJob",
+							"dependsOn": [
+								{
+									"activity": "onpremise migration_copy1",
+									"dependencyConditions": [
+										"Succeeded"
+									]
+								}
+							],
+							"policy": {
+								"timeout": "0.12:00:00",
+								"retry": 0,
+								"retryIntervalInSeconds": 30,
+								"secureOutput": false,
+								"secureInput": false
+							},
+							"userProperties": [],
+							"typeProperties": {
+								"jobId": "986239993761586",
+								"jobParameters": {
+									"file_name": {
+										"value": "@item().file_name",
+										"type": "Expression"
+									}
+								}
+							},
+							"linkedServiceName": {
+								"referenceName": "ls_silver_csv",
+								"type": "LinkedServiceReference"
+							}
 						}
 					]
 				}
