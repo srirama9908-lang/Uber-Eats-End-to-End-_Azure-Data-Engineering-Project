@@ -7,10 +7,10 @@
 		"typeProperties": {
 			"host": "\\\\DESKTOP-P63LGSO\\UberEats",
 			"userId": "DESKTOP-P63LGSO\\admin",
-			"encryptedCredential": "eyJDcmVkZW50aWFsSWQiOiIyYjQxZjJjNS0xN2IwLTQ5MDEtOWQ2Zi1hYWEwYjJkMmFkZjMiLCJWZXJzaW9uIjoiMi4wIiwiQ2xhc3NUeXBlIjoiTWljcm9zb2Z0LkRhdGFQcm94eS5Db3JlLkludGVyU2VydmljZURhdGFDb250cmFjdC5DcmVkZW50aWFsU1UwNkNZMTQifQ=="
+			"encryptedCredential": "eyJDcmVkZW50aWFsSWQiOiI1MTg2ZDE1NS01ZTFmLTQ0NjUtYjkwZC1lZTgxNTBlNjE2OTYiLCJWZXJzaW9uIjoiMi4wIiwiQ2xhc3NUeXBlIjoiTWljcm9zb2Z0LkRhdGFQcm94eS5Db3JlLkludGVyU2VydmljZURhdGFDb250cmFjdC5DcmVkZW50aWFsU1UwNkNZMTQifQ=="
 		},
 		"connectVia": {
-			"referenceName": "integrationRuntime1",
+			"referenceName": "integrationRuntime2",
 			"type": "IntegrationRuntimeReference"
 		}
 	}
