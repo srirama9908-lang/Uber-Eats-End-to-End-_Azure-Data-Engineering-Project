@@ -87,7 +87,7 @@
 									"type": "DatasetReference",
 									"parameters": {
 										"p_rel_url": {
-											"value": "@concat(\n    item().endpoint_name,\n    '?updated_after=',\n    formatDateTime(item().last_watermark_value, 'yyyy-MM-ddTHH:mm:ssZ')\n)",
+											"value": "@item().endpoint_name",
 											"type": "Expression"
 										}
 									}
@@ -181,7 +181,7 @@
 							"type": "WebActivity",
 							"dependsOn": [
 								{
-									"activity": "Api_migration",
+									"activity": "Job_api",
 									"dependencyConditions": [
 										"Succeeded"
 									]
@@ -202,6 +202,39 @@
 									"type": "MSI",
 									"resource": "https://vault.azure.net"
 								}
+							}
+						},
+						{
+							"name": "Job_api",
+							"type": "DatabricksJob",
+							"dependsOn": [
+								{
+									"activity": "Api_migration",
+									"dependencyConditions": [
+										"Succeeded"
+									]
+								}
+							],
+							"policy": {
+								"timeout": "0.12:00:00",
+								"retry": 0,
+								"retryIntervalInSeconds": 30,
+								"secureOutput": false,
+								"secureInput": false
+							},
+							"userProperties": [],
+							"typeProperties": {
+								"jobId": "1006977938504729",
+								"jobParameters": {
+									"endpoint_name": {
+										"value": "@item().endpoint_name",
+										"type": "Expression"
+									}
+								}
+							},
+							"linkedServiceName": {
+								"referenceName": "ls_api_adb",
+								"type": "LinkedServiceReference"
 							}
 						}
 					]
